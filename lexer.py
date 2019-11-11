@@ -1,5 +1,9 @@
 import ply.lex as lex
 import re
+
+import tabulate
+
+
 class Lexer:
     token_list = [
         'TOKEN_ID',
@@ -61,25 +65,31 @@ class Lexer:
         'in' : 'TOKEN_IN',
         'steps' : 'TOKEN_STEPS',
     }
+    ids = []
+    ints =[]
+    reals = []
+    strings=[]
     tokens = token_list + list(reserved.values())
     t_ignore = ' \t'
     def t_TOKEN_REAL(self,t):
         r'[\+-]?\b([1-9][0-9]*|0)\b\.\b([0-9]*[1-9]|0)\b'
         # r'(\+|-)?\b((([1-9][0-9]*)|0)(\.([0-9]*[1-9]|0)))\b|\b(\.([0-9]*[1-9]|0))\b'
         # r'\b((\+|-)?(([1-9][0-9]*)|0)?(\.([0-9]*[1-9]|0)))\b|\b((\+|-)?(([1-9][0-9]*)|0)(\.([0-9]*[1-9]|0)?))\b'
+        self.reals.append(t.value)
         try:
             t.value = float(t.value)
         except:
             return self.t_error(t)
-        print(t.value)
+        # print(t.value)
         return t
     def t_TOKEN_INTEGER(self,t):
         # r'[\+-]?[0-9]+|[\+-]?0b[01]+|[\+-]?0x[0-9a-fA-F]+'
         r'[\+-]?\b([1-9][0-9]*|0b0|0x0|0b1[01]*|0x[1-9A-Fa-f][0-9a-fA-F]*|0)\b'
+        self.ints.append(t.value)
         try:
             t.value = int(t.value,0)
         except:
-            print('error')
+            # print('error')
             return self.t_error(t)
         return t
     def t_TOKEN_ID(self,t):
@@ -96,6 +106,7 @@ class Lexer:
                 return self.t_error(t)
             else:
                 i = j
+        self.ids.append(t.value)
 
         return t
     def t_TOKEN_COMMENT(self,t):
@@ -104,16 +115,20 @@ class Lexer:
 
     def t_TOKEN_STRING(self, t):
         r'"(.*?)(\s)*"((\s)*(\+(\s)*"(.*?)"))*'
+        self.strings.append(t.value)
         l = re.split(r'[\n\s]',t.value)
         s=''
-        print(l)
+        # print(l)
         for x in l:
             if len(x)>1:
                 if x[0] == '"' and x[-1] == '"':
                     s+=x[1:-1]
         t.value =s
-        print(t.value)
+        # print(t.value)
         return t
+    def t_TOKEN_ERROR(self,t):
+        r'[\w]+'
+        return self.t_error(t)
     t_TOKEN_BITWISE_AND = r'&'
     t_TOKEN_AND = r'&&'
     t_TOKEN_BITWISE_OR = r'\|'
@@ -142,7 +157,7 @@ class Lexer:
     t_TOKEN_DOT = r'\.'
     t_TOKEN_SEMICOLON = r';'
     t_TOKEN_COMMA = r'\,'
-    t_TOKEN_ERROR = r'[\w]+'
+    # t_TOKEN_ERROR = r'[\w]+'
 
 
     def t_newline(self,t):
@@ -150,7 +165,8 @@ class Lexer:
         t.lexer.lineno += len(t.value)
     def t_error(self,t):
         # print("Illegal character '%s'" % t.value)
-        print('TOKEN_ERROR')
+        # print('TOKEN_ERROR')
+        t.value='-'
         t.lexer.skip(0)
 
     def build(self, **kwargs):
@@ -159,15 +175,87 @@ class Lexer:
 
 data = ''' 
 
+uwu
+_w_
+_1234
+abcd13e
+abcd13_
+abcd13_e_
+ABCD13_e_E_ea
+_
+a
+
+12345
+0x25
+0
+0b0
+0x0
+
+0.0
+12.34
+
+"Spire"
+"Sent"
++
+	"ence."
+
+// Ceb.
+/*Ceeeeb*/
+/*Ceeeeee
+eeee
+eeeee*/
+/*ceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeb**/
+/*************************/
+/**************************/
+/**/
+
+uwuw
+_w__
+13abcde
+
+00
+0x00a
+0b00010010
+
+.64
+64.
+024.23
+24.320
+
 ""Nier"
 "Sent"+"ence.""
+
+/*/**/*/
+
+UwU-23=6^_<0x1*3<<_a_;
 '''
-lexer = Lexer().build()
+l = Lexer()
+lexer = l.build()
 lexer.input(data)
 
+types = []
+lexemes = []
+attrs = []
 while True:
     tok = lexer.token()
+    # print(dir(tok))
+    # break
     if not tok:
         break
-    print(tok.type)
-    print(tok.value)
+    # print(tok.lexer,end='\t\t')
+    if tok.type == 'TOKEN_ID':
+        lexemes.append(tok.value)
+        tok.value = l.ids.index(tok.value)
+    elif tok.type == 'TOKEN_INTEGER':
+        lexemes.append(l.ints.pop(0))
+    elif tok.type == 'TOKEN_REAL':
+        lexemes.append(l.reals.pop(0))
+    elif tok.type == 'TOKEN_STRING':
+        lexemes.append(l.strings.pop(0))
+    else: lexemes.append(tok.value)
+    types.append(tok.type)
+    attrs.append(tok.value)
+t = []
+for i in range(len(lexemes)):
+    t.append([lexemes[i],types[i],attrs[i]])
+print(tabulate.tabulate(t,headers=['Lexemes','Types','Attributes'],tablefmt='html'))
