@@ -7,15 +7,15 @@
 <tr><th>Lexemes          </th><th>Types               </th><th>Attributes  </th></tr>
 </thead>
 <tbody>
-<tr><td>uwu              </td><td>TOKEN_ID            </td><td>0           </td></tr>
-<tr><td>_w_              </td><td>TOKEN_ID            </td><td>1           </td></tr>
-<tr><td>_1234            </td><td>TOKEN_ID            </td><td>2           </td></tr>
-<tr><td>abcd13e          </td><td>TOKEN_ID            </td><td>3           </td></tr>
-<tr><td>abcd13_          </td><td>TOKEN_ID            </td><td>4           </td></tr>
-<tr><td>abcd13_e_        </td><td>TOKEN_ID            </td><td>5           </td></tr>
-<tr><td>ABCD13_e_E_ea    </td><td>TOKEN_ID            </td><td>6           </td></tr>
-<tr><td>_                </td><td>TOKEN_ID            </td><td>7           </td></tr>
-<tr><td>a                </td><td>TOKEN_ID            </td><td>8           </td></tr>
+<tr><td>uwu              </td><td>TOKEN_ID            </td><td>Index_ID 0  </td></tr>
+<tr><td>_w_              </td><td>TOKEN_ID            </td><td>Index_ID 1  </td></tr>
+<tr><td>_1234            </td><td>TOKEN_ID            </td><td>Index_ID 2  </td></tr>
+<tr><td>abcd13e          </td><td>TOKEN_ID            </td><td>Index_ID 3  </td></tr>
+<tr><td>abcd13_          </td><td>TOKEN_ID            </td><td>Index_ID 4  </td></tr>
+<tr><td>abcd13_e_        </td><td>TOKEN_ID            </td><td>Index_ID 5  </td></tr>
+<tr><td>ABCD13_e_E_ea    </td><td>TOKEN_ID            </td><td>Index_ID 6  </td></tr>
+<tr><td>_                </td><td>TOKEN_ID            </td><td>Index_ID 7  </td></tr>
+<tr><td>a                </td><td>TOKEN_ID            </td><td>Index_ID 8  </td></tr>
 <tr><td>12345            </td><td>TOKEN_INTEGER       </td><td>12345       </td></tr>
 <tr><td>0x25             </td><td>TOKEN_INTEGER       </td><td>37          </td></tr>
 <tr><td>0                </td><td>TOKEN_INTEGER       </td><td>0           </td></tr>
@@ -44,18 +44,19 @@
 <tr><td>""               </td><td>TOKEN_STRING        </td><td>            </td></tr>
 <tr><td>*                </td><td>TOKEN_MULTIPLICATION</td><td>*           </td></tr>
 <tr><td>/                </td><td>TOKEN_DIVISION      </td><td>/           </td></tr>
-<tr><td>UwU              </td><td>TOKEN_ID            </td><td>9           </td></tr>
+<tr><td>UwU              </td><td>TOKEN_ID            </td><td>Index_ID 9  </td></tr>
 <tr><td>-23              </td><td>TOKEN_INTEGER       </td><td>-23         </td></tr>
 <tr><td>=                </td><td>TOKEN_ASSIGNMENT    </td><td>=           </td></tr>
 <tr><td>6                </td><td>TOKEN_INTEGER       </td><td>6           </td></tr>
 <tr><td>^                </td><td>TOKEN_POWER         </td><td>^           </td></tr>
-<tr><td>_                </td><td>TOKEN_ID            </td><td>7           </td></tr>
+<tr><td>_                </td><td>TOKEN_ID            </td><td>Index_ID 7  </td></tr>
 <tr><td><                </td><td>TOKEN_LT            </td><td><           </td></tr>
 <tr><td>0x1              </td><td>TOKEN_INTEGER       </td><td>1           </td></tr>
 <tr><td>*                </td><td>TOKEN_MULTIPLICATION</td><td>*           </td></tr>
 <tr><td>3                </td><td>TOKEN_INTEGER       </td><td>3           </td></tr>
 <tr><td><<               </td><td>TOKEN_SHIFT_LEFT    </td><td><<          </td></tr>
-<tr><td>_a_              </td><td>TOKEN_ID            </td><td>11          </td></tr>
+<tr><td>_a_              </td><td>TOKEN_ID            </td><td>Index_ID 11 </td></tr>
 <tr><td>;                </td><td>TOKEN_SEMICOLON     </td><td>;           </td></tr>
 </tbody>
 </table>
+
