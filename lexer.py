@@ -1,7 +1,6 @@
 import ply.lex as lex
 import re
 
-import tabulate
 
 
 class Lexer:
@@ -173,89 +172,3 @@ class Lexer:
         self.lexer = lex.lex(module=self, **kwargs)
         return self.lexer
 
-data = ''' 
-
-uwu
-_w_
-_1234
-abcd13e
-abcd13_
-abcd13_e_
-ABCD13_e_E_ea
-_
-a
-
-12345
-0x25
-0
-0b0
-0x0
-
-0.0
-12.34
-
-"Spire"
-"Sent"
-+
-	"ence."
-
-// Ceb.
-/*Ceeeeb*/
-/*Ceeeeee
-eeee
-eeeee*/
-/*ceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeb**/
-/*************************/
-/**************************/
-/**/
-
-uwuw
-_w__
-13abcde
-
-00
-0x00a
-0b00010010
-
-.64
-64.
-024.23
-24.320
-
-""Nier"
-"Sent"+"ence.""
-
-/*/**/*/
-
-UwU-23=6^_<0x1*3<<_a_;
-'''
-l = Lexer()
-lexer = l.build()
-lexer.input(data)
-
-types = []
-lexemes = []
-attrs = []
-while True:
-    tok = lexer.token()
-    # print(dir(tok))
-    # break
-    if not tok:
-        break
-    # print(tok.lexer,end='\t\t')
-    if tok.type == 'TOKEN_ID':
-        lexemes.append(tok.value)
-        tok.value = l.ids.index(tok.value)
-    elif tok.type == 'TOKEN_INTEGER':
-        lexemes.append(l.ints.pop(0))
-    elif tok.type == 'TOKEN_REAL':
-        lexemes.append(l.reals.pop(0))
-    elif tok.type == 'TOKEN_STRING':
-        lexemes.append(l.strings.pop(0))
-    else: lexemes.append(tok.value)
-    types.append(tok.type)
-    attrs.append(tok.value)
-t = []
-for i in range(len(lexemes)):
-    t.append([lexemes[i],types[i],attrs[i]])
-print(tabulate.tabulate(t,headers=['Lexemes','Types','Attributes'],tablefmt='html'))
