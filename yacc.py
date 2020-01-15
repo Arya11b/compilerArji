@@ -64,11 +64,19 @@ class Yacc:
         'var_type : return_type'
         print('var_type : return_type')
 
+    #lvaluel
+    def p_var_type_return_lval(self, p):
+        'var_type : lvalue1'
+        print('var_type : lvalue1')
 
     def p_var_type_static_return(self, p):
         'var_type : TOKEN_STATIC return_type'
         print('var_type : TOKEN_STATIC return_type')
 
+    #static lval
+    def p_var_type_return_static_lval(self, p):
+        'var_type : TOKEN_STATIC lvalue1'
+        print('var_type : TOKEN_STATIC lvalue1')
 
     def p_return_type_int(self, p):
         'return_type : TOKEN_INT_TYPE'
@@ -86,9 +94,9 @@ class Yacc:
         'return_type : TOKEN_STRING_TYPE'
         print('return_type : TOKEN_STRING_TYPE')
 
-    def p_return_type_id(self, p):
-        'return_type : TOKEN_ID'
-        print('return_type : TOKEN_ID')
+    # def p_return_type_id(self, p):
+    #     'return_type : TOKEN_ID'
+    #     print('return_type : TOKEN_ID')
 
     def p_var_list_comma(self, p):
         'var_list : var_list TOKEN_COMMA var_list_item'
@@ -98,13 +106,25 @@ class Yacc:
         'var_list : var_list_item'
         print('var_list : var_list_item')
 
+    # def p_var_list_item_id(self, p):
+    #     'var_list_item : TOKEN_ID'
+    #     print('var_list_item : TOKEN_ID')
+
+    def p_item1(self, p):
+        'item1 : TOKEN_ID TOKEN_ASSIGNMENT exp'
+        print('item1 -> TOKEN_ID TOKEN_ASSIGNMENT exp')
+
+    def p_var_list_item_item1(self, p):
+        'var_list_item : item1'
+        print('var_list_item -> item1')
+
     def p_var_list_item_id(self, p):
         'var_list_item : TOKEN_ID'
-        print('var_list_item : TOKEN_ID')
+        print('var_list_item -> TOKEN_ID')
 
-    def p_var_list_item_assignment(self, p):
-        'var_list_item : TOKEN_ID TOKEN_ASSIGNMENT exp'
-        print('var_list_item : TOKEN_ID TOKEN_ASSIGNMENT exp')
+    # def p_var_list_item_assignment(self, p):
+    #     'var_list_item : TOKEN_ID TOKEN_ASSIGNMENT exp'
+    #     print('var_list_item : TOKEN_ID TOKEN_ASSIGNMENT exp')
 
     def p_func_dec(self, p):
         'func_dec : var_type func_body'
@@ -141,6 +161,10 @@ class Yacc:
     def p_formal_argument(self, p):
         'formal_argument : return_type TOKEN_ID'
         print('formal_argument : return_type TOKEN_ID')
+    # lvalue1
+    def p_formal_argument_1(self, p):
+        'formal_argument : lvalue1 TOKEN_ID'
+        print('formal_argument -> lvalue1 TOKEN_ID')
 
 
     def p_block(self, p):
@@ -207,13 +231,21 @@ class Yacc:
         'assignment : lvalue TOKEN_ASSIGNMENT exp TOKEN_SEMICOLON'
         print('assignment : lvalue TOKEN_ASSIGNMENT exp TOKEN_SEMICOLON')
 
-    def p_lvalue_id(self, p):
-        'lvalue : TOKEN_ID'
-        print('lvalue1 : TOKEN_ID')
+    def p_lvalue_lvalue1(self, p):
+        'lvalue : lvalue1 %prec LVALI'
+        print('lvalue -> lvalue1')
+
+    def p_lvalue_lvalue2(self, p):
+        'lvalue : lvalue2 %prec LVAL'
+        print('lvalue -> lvalue2')
 
     def p_lvalue_idid(self, p):
-        'lvalue : TOKEN_ID TOKEN_DOT TOKEN_ID'
+        'lvalue2 : TOKEN_ID TOKEN_DOT TOKEN_ID'
         print('lvalue : TOKEN_ID TOKEN_DOT TOKEN_ID')
+
+    def p_lvalue_id(self, p):
+        'lvalue1 : TOKEN_ID'
+        print('lvalue : TOKEN_ID')
 
     def p_print(self, p):
         'print : TOKEN_PRINT TOKEN_LP TOKEN_STRING TOKEN_RP TOKEN_SEMICOLON'
@@ -223,41 +255,37 @@ class Yacc:
         'statement_var_dec : return_type var_list TOKEN_SEMICOLON'
         print('statement_var_dec : return_type var_list TOKEN_SEMICOLON')
 
-    # def p_statement_var_dec_1(self, p):
-    #     'statement_var_dec : lvalue1 var_list TOKEN_SEMICOLON'
-    #     print('statement_var_dec : lvalue1 var_list TOKEN_SEMICOLON')
+    def p_statement_var_dec_1(self, p):
+        'statement_var_dec : lvalue1 var_list TOKEN_SEMICOLON'
+        print('statement_var_dec : lvalue1 var_list TOKEN_SEMICOLON')
 
-    def p_if(self, p):
-        'if : TOKEN_IF TOKEN_LP exp TOKEN_RP block elseif_blocks else_block'
+    def p_if_type1(self, p):
+        'if : TOKEN_IF TOKEN_LP exp TOKEN_RP block %prec TOKEN_IF'
         print('if : TOKEN_IF TOKEN_LP exp TOKEN_RP block %prec TOKEN_IF')
 
-    def p_elseif_blocks(self, p):
-        'elseif_blocks : elseifs'
-        print('elseif_blocks : elseifs')
+    def p_if_type2(self, p):
+        'if : TOKEN_IF TOKEN_LP exp TOKEN_RP block TOKEN_ELSE block %prec TOKEN_ELSE'
+        print('if : TOKEN_IF TOKEN_LP exp TOKEN_RP block TOKEN_ELSE block %prec TOKEN_ELSE')
 
-    def p_elseif_blocks_ep(self, p):
-        'elseif_blocks : '
-        print('elseif_blocks : ')
+    def p_if_type3(self, p):
+        'if : TOKEN_IF TOKEN_LP exp TOKEN_RP block elseifs %prec TOKEN_ELSEIF'
+        print('if : TOKEN_IF TOKEN_LP exp TOKEN_RP block elseifs %prec TOKEN_ELSEIF')
 
-    def p_elseifs(self, p):
+    def p_if_type4(self, p):
+        'if : TOKEN_IF TOKEN_LP exp TOKEN_RP block elseifs TOKEN_ELSE block %prec TOKEN_ELSEIF'
+        print('if : TOKEN_IF TOKEN_LP exp TOKEN_RP block elseifs TOKEN_ELSE block %prec TOKEN_ELSEIF')
+
+    def p_elseifs_type1(self, p):
         'elseifs : elseifs elseif'
         print('elseifs : elseifs elseif')
 
-    def p_elseifs_ep(self, p):
+    def p_elseifs_type2(self, p):
         'elseifs : elseif'
         print('elseifs : elseif')
 
     def p_elseif(self, p):
         'elseif : TOKEN_ELSEIF TOKEN_LP exp TOKEN_RP block'
         print('elseif : TOKEN_ELSEIF TOKEN_LP exp TOKEN_RP block')
-
-    def p_else_block(self,p):
-        'else_block : TOKEN_ELSE block'
-        print('else_block : TOKEN_ELSE block')
-
-    def p_else_block_ep(self,p):
-        'else_block : '
-        print('else_block : ')
 
     def p_for(self, p):
         'for : TOKEN_FOR TOKEN_LP TOKEN_ID TOKEN_IN exp TOKEN_TO exp TOKEN_STEPS exp TOKEN_RP block'
@@ -304,7 +332,7 @@ class Yacc:
         print('exp : lvalue')
 
     def p_exp_binary_op(self, p):
-        'exp : binary_operation'
+        'exp : binary_operation %prec BIOP'
         print('exp : binary_operation %prec BIOP')
 
     def p_exp_logical_op(self, p):
@@ -312,11 +340,11 @@ class Yacc:
         print('exp : logical_operation')
 
     def p_exp_comparison_op(self, p):
-        'exp : comparison_operation'
+        'exp : comparison_operation %prec COMOP'
         print('exp : comparison_operation %prec COMOP')
 
     def p_exp_bitwise_op(self, p):
-        'exp : bitwise_operation'
+        'exp : bitwise_operation %prec BITOP'
         print('exp : bitwise_operation %prec BITOP')
 
     def p_exp_unary_op(self, p):
@@ -404,7 +432,7 @@ class Yacc:
         print('bitwise_operation : exp TOKEN_BITWISE_OR exp')
 
     def p_unary_operation_mirror(self, p):
-        'unary_operation : TOKEN_SUBTRACTION exp '
+        'unary_operation : TOKEN_SUBTRACTION exp %prec UMINUS'
         print('unary_operation : TOKEN_SUBTRACTION exp %prec UMINUS')
 
     def p_unary_operation_not(self, p):
@@ -444,37 +472,6 @@ class Yacc:
 
     # def p_id_rule(self, p):
     #     'id_rule : ID'
-
-    # def p_exp_plus2(self,p):
-    #     'exp : exp term'
-    #     p[0] = p[1] + p[2]
-    #
-    # def p_exp_plus(self, p):
-    #     'exp : exp TOKEN_ADDITION term'
-    #     p[0] = p[1] + p[3]
-    #
-    # def p_exp_minus(self,p):
-    #     'exp : exp TOKEN_SUBTRACTION term'
-    #     p[0] = p[1] - p[3]
-    #
-    # def p_exp_term(self,p):
-    #     'exp : term'
-    #     p[0] = p[1]
-    #
-    # def p_term_times(self,p):
-    #     'term : term TOKEN_MULTIPLICATION factor'
-    #     p[0] = p[1] * p[3]
-    #
-    # def p_term_div(self,p):
-    #     'term : term TOKEN_DIVISION factor'
-    #     p[0] = p[1] / p[3]
-    #
-    #
-    # def p_term_factor(self,p):
-    #     'term : factor'
-    #     p[0] = p[1]
-    #
-    #
     # def p_factor_num(self,p):
     #     'factor : TOKEN_INTEGER'
     #     p[0] = p[1]
@@ -487,46 +484,39 @@ class Yacc:
     # Error rule for syntax errors
     def p_error(self,p):
         print("Syntax error in input!")
+        print(p)
     def build(self, **kwargs):
         'build the parser'
         self.parser = yacc.yacc(module=self, **kwargs)
         return self.parser
 
-    # precedence = (
-    #     ('nonassoc', 'LVALI'),
-    #     ('nonassoc', 'LVAL'),
-    #     ('nonassoc', 'BIOP'),
-    #     ('nonassoc', 'COMOP'),
-    #     ('nonassoc', 'BITOP'),
-    #     ('left', 'TOKEN_IF'),
-    #     ('left', 'TOKEN_ELSEIF'),
-    #     ('left', 'TOKEN_ELSE'),
-    #     ('left', 'TOKEN_COMMA'),
-    #     ('left', 'TOKEN_ASSIGNMENT'),
-    #     ('left', 'TOKEN_OR'),
-    #     ('left', 'TOKEN_AND'),
-    #     ('left', 'TOKEN_NOT'),
-    #     ('left', 'TOKEN_BITWISE_OR'),
-    #     ('left', 'TOKEN_BITWISE_AND'),
-    #     ('left', 'TOKEN_BITWISE_NOT'),
-    #     ('left', 'TOKEN_LE', 'TOKEN_EQ', 'TOKEN_NE', 'TOKEN_GE', 'TOKEN_GT', 'TOKEN_LT'),
-    #     ('left', 'TOKEN_SHIFT_LEFT', 'TOKEN_SHIFT_RIGHT'),
-    #     ('left', 'TOKEN_ADDITION', 'TOKEN_SUBTRACTION'),
-    #     ('left', 'TOKEN_MULTIPLICATION', 'TOKEN_DIVISION'),
-    #     ('left', 'TOKEN_POWER'),
-    #     ('left', 'TOKEN_MODULO'),
-    #     ('left', 'UMINUS'),
-    #     ('left', 'TOKEN_RP', 'TOKEN_LP')
-    # )
-y = Yacc()
-# Build the parser
-data = '''
+    precedence = (
+        ('nonassoc', 'LVALI'),
+        ('nonassoc', 'LVAL'),
+        ('nonassoc', 'BIOP'),
+        ('nonassoc', 'COMOP'),
+        ('nonassoc', 'BITOP'),
+        ('left', 'TOKEN_IF'),
+        ('left', 'TOKEN_ELSEIF'),
+        ('left', 'TOKEN_ELSE'),
+        ('left', 'TOKEN_COMMA'),
+        ('left', 'TOKEN_ASSIGNMENT'),
+        ('left', 'TOKEN_OR'),
+        ('left', 'TOKEN_AND'),
+        ('left', 'TOKEN_NOT'),
+        ('left', 'TOKEN_BITWISE_OR'),
+        ('left', 'TOKEN_BITWISE_AND'),
+        ('left', 'TOKEN_BITWISE_NOT'),
+        ('left', 'TOKEN_LE', 'TOKEN_EQ', 'TOKEN_NE', 'TOKEN_GE', 'TOKEN_GT', 'TOKEN_LT'),
+        ('left', 'TOKEN_SHIFT_LEFT', 'TOKEN_SHIFT_RIGHT'),
+        ('left', 'TOKEN_ADDITION', 'TOKEN_SUBTRACTION'),
+        ('left', 'TOKEN_MULTIPLICATION', 'TOKEN_DIVISION'),
+        ('left', 'TOKEN_POWER'),
+        ('left', 'TOKEN_MODULO'),
+        ('left', 'UMINUS'),
+        ('left', 'TOKEN_RP', 'TOKEN_LP')
+    )
 
- '''
-parser = y.build()
-
-result = parser.parse(data)
-print(result)
 #
 # while True:
 #     try:

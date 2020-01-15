@@ -93,6 +93,9 @@ class Lexer:
         return t
     def t_TOKEN_ID(self,t):
         r'[a-zA-Z_][a-zA-Z_0-9]*'
+        t.type = self.reserved.get(t.value, 'TOKEN_ID')
+        if t.type != 'TOKEN_ID':
+            return t
         if len(t.value)%2==0:
             return self.t_error(t)
         i = 0

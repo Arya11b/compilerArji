@@ -1,12 +1,31 @@
 from lexer import Lexer
+from yacc import Yacc
 import tabulate
+data = '''
+reference "Number.shl"
+class Program{
+	string str = "string";
+	real numbere;
 
-data = ''' 
+	static void maine(){
+		if(1){
+			int num1r;
 
-2 + 6
-2 +6
-- 5
-'''
+			if(2){
+				int num2t;
+			}
+
+			while(true){
+				bool boolean = false;
+			}
+		}
+	}
+
+	static int add(int a, int b){
+		return a + b;
+	}
+}
+ '''
 l = Lexer()
 lexer = l.build()
 lexer.input(data)
@@ -34,6 +53,15 @@ while True:
     types.append(tok.type)
     attrs.append(tok.value)
 t = []
-for i in range(len(lexemes)):
-    t.append([lexemes[i],types[i],attrs[i]])
-print(tabulate.tabulate(t,headers=['Lexemes','Types','Attributes']))
+
+y = Yacc()
+# Build the parser
+
+parser = y.build()
+
+result = parser.parse(data)
+print(result)
+
+# for i in range(len(lexemes)):
+#     t.append([lexemes[i],types[i],attrs[i]])
+# print(tabulate.tabulate(t,headers=['Lexemes','Types','Attributes']))
