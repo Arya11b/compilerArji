@@ -1,13 +1,20 @@
+from codeGenerator import *
 from lexer import Lexer
-
+from fetch_nonterminal import NoneTerminal
 # Yacc example
 import ply.yacc as yacc
+from register import Register, Label
+
+
+
+
 # Get the token map from the lexer.  This is required.
 class Yacc:
+    codes = []
+    symbol_table = []
     l = Lexer()
     l.build()
     tokens = l.tokens
-
     def p_program(self, p):
         'program : macros classes'
         print('program : macros classes')
@@ -100,6 +107,7 @@ class Yacc:
 
     def p_var_list_comma(self, p):
         'var_list : var_list TOKEN_COMMA var_list_item'
+        p[0] = NoneTerminal(p)
         print('var_list : var_list TOKEN_COMMA var_list_item')
 
     def p_var_list_var_list_item(self, p):
@@ -110,8 +118,19 @@ class Yacc:
     #     'var_list_item : TOKEN_ID'
     #     print('var_list_item : TOKEN_ID')
 
-    def p_item1(self, p):
+    def p_item1(self, p): #handled
         'item1 : TOKEN_ID TOKEN_ASSIGNMENT exp'
+        p[0] = NoneTerminal(p)
+        p[0].label = p[1]
+        p[0].value = str(p[3].value)
+        p[0].type = p[3].type
+
+        p[0].code = p[0].label + ' := ' + p[0].value + ';'
+        print('==== code ====')
+        print(p[0].code)
+        print('==============')
+        self.symbol_table.append([p[0].label, p[0].value])
+
         print('item1 -> TOKEN_ID TOKEN_ASSIGNMENT exp')
 
     def p_var_list_item_item1(self, p):
@@ -229,10 +248,20 @@ class Yacc:
 
     def p_assignment(self, p):
         'assignment : lvalue TOKEN_ASSIGNMENT exp TOKEN_SEMICOLON'
+        p[0] = NoneTerminal(p)
+        if p[3].place != '':
+            p[0].code = p[1].value + " = " + p[3].place + ";"
+            p[0].address = len(self.codes)
+            self.codes.append(p[0].code)
+            p[0].code = p[3].code + p[0].code
+        elif p[3].value != '':
+            p[0].code = p[1].value + " = " + p[3].value + ";"
+        print(self.codes)
         print('assignment : lvalue TOKEN_ASSIGNMENT exp TOKEN_SEMICOLON')
 
     def p_lvalue_lvalue1(self, p):
         'lvalue : lvalue1 %prec LVALI'
+        p[0] = p[1]
         print('lvalue -> lvalue1')
 
     def p_lvalue_lvalue2(self, p):
@@ -245,6 +274,8 @@ class Yacc:
 
     def p_lvalue_id(self, p):
         'lvalue1 : TOKEN_ID'
+        p[0] = NoneTerminal(p)
+        p[0].value = p[1]
         print('lvalue : TOKEN_ID')
 
     def p_print(self, p):
@@ -262,6 +293,18 @@ class Yacc:
     def p_if_type1(self, p):
         'if : TOKEN_IF TOKEN_LP exp TOKEN_RP block %prec TOKEN_IF'
         print('if : TOKEN_IF TOKEN_LP exp TOKEN_RP block %prec TOKEN_IF')
+        print()
+        print("if ps")
+        global VARIABLES
+        p[0] = NoneTerminal(p)
+        print(p[0].value)
+        print(p[1])
+        print(p[2])
+        print(p[3])
+        print(p[4])
+        print(p[5])
+        print()
+        print()
 
     def p_if_type2(self, p):
         'if : TOKEN_IF TOKEN_LP exp TOKEN_RP block TOKEN_ELSE block %prec TOKEN_ELSE'
@@ -307,48 +350,76 @@ class Yacc:
         'continue : TOKEN_CONTINUE TOKEN_SEMICOLON'
         print('continue : TOKEN_CONTINUE TOKEN_SEMICOLON')
 
-    def p_exp_int(self, p):
+    def p_exp_int(self, p): #handled
         'exp : TOKEN_INTEGER'
+        p[0] = NoneTerminal(p)
+        p[0].type = 'int'
+        p[0].value = str(p[1])
+        # p[0].code = p[1]
+        print()
+        print('====int====')
+        print(p[0].type)
+        print(p[0].value)
+        print('===========')
+        print()
         print('exp : TOKEN_INTEGER')
 
     def p_exp_real(self, p):
         'exp : TOKEN_REAL'
+        p[0] = NoneTerminal(p)
+        p[0].type = 'real'
+        p[0].value = str(p[1])
         print('exp : TOKEN_REAL')
 
     def p_exp_true(self, p):
         'exp : TOKEN_TRUE'
+        p[0] = NoneTerminal(p)
+        p[0].type = 'bool'
+        p[0].value = 'True'
         print('exp : TOKEN_TRUE')
 
     def p_exp_false(self, p):
         'exp : TOKEN_FALSE'
+        p[0] = NoneTerminal(p)
+        p[0].type = 'bool'
+        p[0].value = 'False'
         print('exp : TOKEN_FALSE')
 
     def p_exp_string(self, p):
         'exp : TOKEN_STRING'
+        p[0] = NoneTerminal(p)
+        p[0].type = 'bool'
+        p[0].value = '"' + p[1] + '"'
         print('exp : TOKEN_STRING')
 
     def p_exp_lvalue(self, p):
         'exp : lvalue'
+        p[0] = p[1]
         print('exp : lvalue')
 
     def p_exp_binary_op(self, p):
         'exp : binary_operation %prec BIOP'
+        p[0] = p[1]
         print('exp : binary_operation %prec BIOP')
 
     def p_exp_logical_op(self, p):
         'exp : logical_operation'
+        p[0] = p[1]
         print('exp : logical_operation')
 
     def p_exp_comparison_op(self, p):
         'exp : comparison_operation %prec COMOP'
+        p[0] = p[1]
         print('exp : comparison_operation %prec COMOP')
 
     def p_exp_bitwise_op(self, p):
         'exp : bitwise_operation %prec BITOP'
+        p[0] = p[1]
         print('exp : bitwise_operation %prec BITOP')
 
     def p_exp_unary_op(self, p):
         'exp : unary_operation'
+        p[0] = p[1]
         print('exp : unary_operation')
 
     def p_exp_lp_exp_rp(self, p):
@@ -361,26 +432,32 @@ class Yacc:
 
     def p_binary_operation_add(self, p):
         'binary_operation : exp TOKEN_ADDITION exp '
+        binary_operation_code_4op(p, self.codes)
         print('binary_operation : exp TOKEN_ADDITION exp ')
 
     def p_binary_operation_sub(self, p):
         'binary_operation : exp TOKEN_SUBTRACTION exp'
+        binary_operation_code_4op(p, self.codes)
         print('binary_operation : exp TOKEN_SUBTRACTION exp')
 
-    def p_binary_operation_mult(self, p):
+    def p_binary_operation_mult(self, p): #handled
         'binary_operation : exp TOKEN_MULTIPLICATION exp'
+        binary_operation_code_4op(p, self.codes)
         print('binary_operation : exp TOKEN_MULTIPLICATION exp')
 
     def p_binary_operation_div(self, p):
         'binary_operation : exp TOKEN_DIVISION exp'
+        binary_operation_code_4op(p, self.codes)
         print('binary_operation : exp TOKEN_DIVISION exp')
 
     def p_binary_operation_modulu(self, p):
         'binary_operation : exp TOKEN_MODULO exp'
+        binary_operation_code_4op(p, self.codes)
         print('binary_operation : exp TOKEN_MODULO exp')
 
     def p_binary_operation_pow(self, p):
         'binary_operation : exp TOKEN_POWER exp'
+        binary_operation_code_4op(p, self.codes)
         print('binary_operation : exp TOKEN_POWER exp')
 
     def p_binary_operation_shleft(self, p):
@@ -433,14 +510,17 @@ class Yacc:
 
     def p_unary_operation_mirror(self, p):
         'unary_operation : TOKEN_SUBTRACTION exp %prec UMINUS'
+        binary_operation_code_3op(p,self.codes)
         print('unary_operation : TOKEN_SUBTRACTION exp %prec UMINUS')
-
+    #ok
     def p_unary_operation_not(self, p):
         'unary_operation : TOKEN_NOT exp'
+        binary_operation_code_3op(p,self.codes)
         print('unary_operation : TOKEN_NOT exp')
-
+    #ok
     def p_unary_operation_bit_not(self, p):
         'unary_operation : TOKEN_BITWISE_NOT exp'
+        binary_operation_code_3op(p,self.codes)
         print('unary_operation : TOKEN_BITWISE_NOT exp')
 
     def p_function_call_func2(self, p):
@@ -518,12 +598,9 @@ class Yacc:
     )
 
 #
-# while True:
-#     try:
-#         s = input('calc > ')
-#     except EOFError:
-#         break
-#     if not s: continue
-#     result = parser.parse(s)
-#     print(result)
+# y = Yacc()
+# parser = y.build()
+#
+# result = parser.parse('')
+# print(result)
 #

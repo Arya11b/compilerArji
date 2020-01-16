@@ -1,29 +1,16 @@
 from lexer import Lexer
 from yacc import Yacc
+# from parser_test import Parser as Yacc
 import tabulate
 phase_2_test_data = '''
-reference "Number.shl"
+//reference "Number.shl"
 class Program{
-	string str = "string";
-	real numbere;
 
 	static void maine(){
-		if(1){
-			int num1r;
+	int a = 5;
+    a = !4;
+    }
 
-			if(2){
-				int num2t;
-			}
-
-			while(true){
-				int boolean = 3;
-			}
-		}
-	}
-
-	static int add(int a, int b){
-		return a + b;
-	}
 }
  '''
 empty_data = ''
@@ -36,7 +23,7 @@ class Program{
 	}
 }
 '''
-data = test
+data = phase_2_test_data
 l = Lexer()
 lexer = l.build()
 lexer.input(data)
@@ -70,8 +57,7 @@ y = Yacc()
 
 parser = y.build()
 
-result = parser.parse(data)
-print(result)
+print(parser.parse(data))
 
 # for i in range(len(lexemes)):
 #     t.append([lexemes[i],types[i],attrs[i]])
