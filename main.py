@@ -1,7 +1,7 @@
 from lexer import Lexer
 from yacc import Yacc
 import tabulate
-data = '''
+phase_2_test_data = '''
 reference "Number.shl"
 class Program{
 	string str = "string";
@@ -16,7 +16,7 @@ class Program{
 			}
 
 			while(true){
-				bool boolean = false;
+				int boolean = 3;
 			}
 		}
 	}
@@ -26,6 +26,17 @@ class Program{
 	}
 }
  '''
+empty_data = ''
+test = '''
+reference "Number.shl"
+class Program{
+
+	static void maine(){
+        int mai = 3
+	}
+}
+'''
+data = test
 l = Lexer()
 lexer = l.build()
 lexer.input(data)
