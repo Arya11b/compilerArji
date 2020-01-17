@@ -7,8 +7,9 @@ phase_2_test_data = '''
 class Program{
 
 	static void maine(){
-	int a = 5;
-    a = !4;
+	bool a = true;
+	bool b = false;
+	bool c = a && b;
     }
 
 }
@@ -16,11 +17,28 @@ class Program{
 empty_data = ''
 test = '''
 reference "Number.shl"
-class Program{
 
-	static void maine(){
-        int mai = 3
-	}
+class Program{
+  string str = "string";
+  real numbere;
+  
+  static void maine(){
+    if(1){
+      int _num1;
+      
+      if(2){
+        int _num2;
+      }
+      
+      while(true){
+        int _num3;
+      }
+    }
+  }
+  
+  static int add(int a, int b){
+    return a + b;
+  }
 }
 '''
 data = phase_2_test_data
@@ -57,8 +75,8 @@ y = Yacc()
 
 parser = y.build()
 
-print(parser.parse(data))
-
+parser.parse(data)
+print(y.codes)
 # for i in range(len(lexemes)):
 #     t.append([lexemes[i],types[i],attrs[i]])
 # print(tabulate.tabulate(t,headers=['Lexemes','Types','Attributes']))

@@ -1,201 +1,114 @@
-        'program : macros classes'
-        'macros : macros macro'
-        'macros : '
-        'macro : reference'
-        'reference : TOKEN_REFERENCE TOKEN_STRING'
-        'classes : classes class'
-        'classes : '
-        'class : TOKEN_CLASS TOKEN_ID TOKEN_LCB symbol_decs TOKEN_RCB'
-        'symbol_decs : symbol_decs symbol_dec'
-        'symbol_decs : '
-        'symbol_dec : var_dec'
-        'symbol_dec : func_dec'
-        'var_dec : var_type var_list TOKEN_SEMICOLON'
-        'var_type : return_type'
-        'var_type : lvalue1'
-        'var_type : TOKEN_STATIC return_type'
-        'var_type : TOKEN_STATIC lvalue1'
-        'return_type : TOKEN_INT_TYPE'
-        'return_type : TOKEN_REAL_TYPE'
-        'return_type : TOKEN_BOOL_TYPE'
-        'return_type : TOKEN_STRING_TYPE'
-        'var_list : var_list TOKEN_COMMA var_list_item'
-        'var_list : var_list_item'
-        'item1 : TOKEN_ID TOKEN_ASSIGNMENT exp'
-        'var_list_item : item1'
-        'var_list_item : TOKEN_ID'
-        'func_dec : var_type func_body'
-        'func_dec : TOKEN_VOID func_body'
-        'func_dec : TOKEN_STATIC TOKEN_VOID func_body'
-        'func_body : TOKEN_ID TOKEN_LP formal_arguments TOKEN_RP block'
-        'formal_arguments : formal_arguments_list'
-        'formal_arguments : '
-        'formal_arguments_list : formal_arguments_list TOKEN_COMMA formal_argument'
-        'formal_arguments_list : formal_argument'
-        'formal_argument : return_type TOKEN_ID'
-        'formal_argument : lvalue1 TOKEN_ID'
-        'block : TOKEN_LCB statements_list TOKEN_RCB'
-        'block : statement'
-        'statements_list : statements_list statement'
-        'statements_list : '
-        'statement : TOKEN_SEMICOLON'
-        'statement : exp TOKEN_SEMICOLON'
-        'statement : assignment'
-        'statement : print'
-        'statement : statement_var_dec'
-        'statement : if'
-        'statement : for'
-        'statement : while'
-        'statement : return'
-        'statement : break'
-        'assignment : lvalue TOKEN_ASSIGNMENT exp TOKEN_SEMICOLON'
-        'lvalue : lvalue1 %prec LVALI'
-        'lvalue : lvalue2 %prec LVAL'
-        'lvalue2 : TOKEN_ID TOKEN_DOT TOKEN_ID'
-        'lvalue1 : TOKEN_ID'
-        'print : TOKEN_PRINT TOKEN_LP TOKEN_STRING TOKEN_RP TOKEN_SEMICOLON'
-        'statement_var_dec : return_type var_list TOKEN_SEMICOLON'
-        'statement_var_dec : lvalue1 var_list TOKEN_SEMICOLON'
-        'if : TOKEN_IF TOKEN_LP exp TOKEN_RP block %prec TOKEN_IF'
-        'if : TOKEN_IF TOKEN_LP exp TOKEN_RP block TOKEN_ELSE block %prec TOKEN_ELSE'
-        'if : TOKEN_IF TOKEN_LP exp TOKEN_RP block elseifs %prec TOKEN_ELSEIF'
-        'if : TOKEN_IF TOKEN_LP exp TOKEN_RP block elseifs TOKEN_ELSE block %prec TOKEN_ELSEIF'
-        'elseifs : elseifs elseif'
-        'elseifs : elseif'
-        'elseif : TOKEN_ELSEIF TOKEN_LP exp TOKEN_RP block'
-        'for : TOKEN_FOR TOKEN_LP TOKEN_ID TOKEN_IN exp TOKEN_TO exp TOKEN_STEPS exp TOKEN_RP block'
-        'while : TOKEN_WHILE TOKEN_LP exp TOKEN_RP block'
-        'return : TOKEN_RETURN exp TOKEN_SEMICOLON'
-        'break : TOKEN_BREAK TOKEN_SEMICOLON'
-        'continue : TOKEN_CONTINUE TOKEN_SEMICOLON'
-        'exp : TOKEN_INTEGER'
-        'exp : TOKEN_REAL'
-        'exp : TOKEN_TRUE'
-        'exp : TOKEN_FALSE'
-        'exp : TOKEN_STRING'
-        'exp : lvalue'
-        'exp : binary_operation %prec BIOP'
-        'exp : logical_operation'
-        'exp : comparison_operation %prec COMOP'
-        'exp : bitwise_operation %prec BITOP'
-        'exp : unary_operation'
-        'exp : TOKEN_LP exp TOKEN_RP'
-        'exp : function_call'
-        'binary_operation : exp TOKEN_ADDITION exp '
-        'binary_operation : exp TOKEN_SUBTRACTION exp'
-        'binary_operation : exp TOKEN_MULTIPLICATION exp'
-        'binary_operation : exp TOKEN_DIVISION exp'
-        'binary_operation : exp TOKEN_MODULO exp'
-        'binary_operation : exp TOKEN_POWER exp'
-        print('binary_operation : exp TOKEN_POWER exp')
-
-    def p_binary_operation_shleft(self, p):
-        'binary_operation : exp TOKEN_SHIFT_LEFT exp'
-        print('binary_operation : exp TOKEN_SHIFT_LEFT exp')
-
-    def p_binary_operation_shright(self, p):
-        'binary_operation : exp TOKEN_SHIFT_RIGHT exp'
-        print('binary_operation : exp TOKEN_SHIFT_RIGHT exp')
-
-    def p_logical_operation_and(self, p):
-        'logical_operation : exp TOKEN_AND exp'
-        print('logical_operation : exp TOKEN_AND exp')
-
-    def p_logical_operation_or(self, p):
-        'logical_operation : exp TOKEN_OR exp'
-        print('logical_operation : exp TOKEN_OR exp')
-
-    def p_comparison_operation_lt(self, p):
-        'comparison_operation : exp TOKEN_LT exp'
-        print('comparison_operation : exp TOKEN_LT exp')
-
-    def p_comparison_operation_le(self, p):
-        'comparison_operation : exp TOKEN_LE exp'
-        print('comparison_operation : exp TOKEN_LE exp')
-
-    def p_comparison_operation_gt(self, p):
-        'comparison_operation : exp TOKEN_GT exp'
-        print('comparison_operation : exp TOKEN_GT exp')
-
-    def p_comparison_operation_ge(self, p):
-        'comparison_operation : exp TOKEN_GE exp'
-        print('comparison_operation : exp TOKEN_GE exp')
-
-    def p_comparison_operation_eq(self, p):
-        'comparison_operation : exp TOKEN_EQ exp'
-        print('comparison_operation : exp TOKEN_EQ exp')
-
-    def p_comparison_operation_ne(self, p):
-        'comparison_operation : exp TOKEN_NE exp'
-        print('comparison_operation : exp TOKEN_NE exp')
-
-    def p_bitwise_operation_bit_and(self, p):
-        'bitwise_operation : exp TOKEN_BITWISE_AND exp'
-        print('bitwise_operation : exp TOKEN_BITWISE_AND exp')
-
-    def p_bitwise_operation_bit_or(self, p):
-        'bitwise_operation : exp TOKEN_BITWISE_OR exp'
-        print('bitwise_operation : exp TOKEN_BITWISE_OR exp')
-
-    def p_unary_operation_mirror(self, p):
-        'unary_operation : TOKEN_SUBTRACTION exp %prec UMINUS'
-        print('unary_operation : TOKEN_SUBTRACTION exp %prec UMINUS')
-
-    def p_unary_operation_not(self, p):
-        'unary_operation : TOKEN_NOT exp'
-        print('unary_operation : TOKEN_NOT exp')
-
-    def p_unary_operation_bit_not(self, p):
-        'unary_operation : TOKEN_BITWISE_NOT exp'
-        print('unary_operation : TOKEN_BITWISE_NOT exp')
-
-    def p_function_call_func2(self, p):
-        'function_call : TOKEN_ID function_call_body'
-        print('function_call : lvalue2 function_call_body')
-
-    def p_function_call_func1(self, p):
-        'function_call : TOKEN_ID TOKEN_DOT TOKEN_ID function_call_body'
-        print('function_call : lvalue1 function_call_body')
-
-    def p_function_call_body(self, p):
-        'function_call_body : TOKEN_LP actual_arguments TOKEN_RP'
-        print('function_call_body : TOKEN_LP actual_arguments TOKEN_RP')
-
-    def p_actual_arguments(self, p):
-        'actual_arguments : actual_arguments_list'
-        print('actual_arguments : actual_arguments_list')
-    def p_actual_arguments_ep(self, p):
-        'actual_arguments : '
-        print('actual_arguments : ')
-
-    def p_actual_arguments_list_comma(self, p):
-        'actual_arguments_list : actual_arguments_list TOKEN_COMMA exp'
-        print('actual_arguments_list : actual_arguments_list TOKEN_COMMA exp')
-
-    def p_actual_arguments_list_exp(self, p):
-        'actual_arguments_list : exp'
-        print('actual_arguments_list : exp')
-
-    # def p_id_rule(self, p):
-    #     'id_rule : ID'
-    # def p_factor_num(self,p):
-    #     'factor : TOKEN_INTEGER'
-    #     p[0] = p[1]
-    #
-    #
-    # def p_factor_expr(self,p):
-    #     'factor : TOKEN_LP exp TOKEN_RP'
-    #     p[0] = p[2]
-    #
-    # Error rule for syntax errors
-    def p_error(self,p):
-        print("Syntax error in input!")
-        print(p)
-    def build(self, **kwargs):
-        'build the parser'
-        self.parser = yacc.yacc(module=self, **kwargs)
-        return self.parser
-
+'program : macros classes'
+'macros : macros macro'
+'macros : '
+'macro : reference'
+'reference : TOKEN_REFERENCE TOKEN_STRING'
+'classes : classes class'
+'classes : '
+'class : TOKEN_CLASS TOKEN_ID TOKEN_LCB symbol_decs TOKEN_RCB'
+'symbol_decs : symbol_decs symbol_dec'
+'symbol_decs : '
+'symbol_dec : var_dec'
+'symbol_dec : func_dec'
+'var_dec : var_type var_list TOKEN_SEMICOLON'
+'var_type : return_type'
+'var_type : lvalue1'
+'var_type : TOKEN_STATIC return_type'
+'var_type : TOKEN_STATIC lvalue1'
+'return_type : TOKEN_INT_TYPE'
+'return_type : TOKEN_REAL_TYPE'
+'return_type : TOKEN_BOOL_TYPE'
+'return_type : TOKEN_STRING_TYPE'
+'var_list : var_list TOKEN_COMMA var_list_item'
+'var_list : var_list_item'
+'item1 : TOKEN_ID TOKEN_ASSIGNMENT exp'
+'var_list_item : item1'
+'var_list_item : TOKEN_ID'
+'func_dec : var_type func_body'
+'func_dec : TOKEN_VOID func_body'
+'func_dec : TOKEN_STATIC TOKEN_VOID func_body'
+'func_body : TOKEN_ID TOKEN_LP formal_arguments TOKEN_RP block'
+'formal_arguments : formal_arguments_list'
+'formal_arguments : '
+'formal_arguments_list : formal_arguments_list TOKEN_COMMA formal_argument'
+'formal_arguments_list : formal_argument'
+'formal_argument : return_type TOKEN_ID'
+'formal_argument : lvalue1 TOKEN_ID'
+'block : TOKEN_LCB statements_list TOKEN_RCB'
+'block : statement'
+'statements_list : statements_list statement'
+'statements_list : '
+'statement : TOKEN_SEMICOLON'
+'statement : exp TOKEN_SEMICOLON'
+'statement : assignment'
+'statement : print'
+'statement : statement_var_dec'
+'statement : if'
+'statement : for'
+'statement : while'
+'statement : return'
+'statement : break'
+'assignment : lvalue TOKEN_ASSIGNMENT exp TOKEN_SEMICOLON'
+'lvalue : lvalue1 %prec LVALI'
+'lvalue : lvalue2 %prec LVAL'
+'lvalue2 : TOKEN_ID TOKEN_DOT TOKEN_ID'
+'lvalue1 : TOKEN_ID'
+'print : TOKEN_PRINT TOKEN_LP TOKEN_STRING TOKEN_RP TOKEN_SEMICOLON'
+'statement_var_dec : return_type var_list TOKEN_SEMICOLON'
+'statement_var_dec : lvalue1 var_list TOKEN_SEMICOLON'
+'if : TOKEN_IF TOKEN_LP exp TOKEN_RP block %prec TOKEN_IF'
+'if : TOKEN_IF TOKEN_LP exp TOKEN_RP block TOKEN_ELSE block %prec TOKEN_ELSE'
+'if : TOKEN_IF TOKEN_LP exp TOKEN_RP block elseifs %prec TOKEN_ELSEIF'
+'if : TOKEN_IF TOKEN_LP exp TOKEN_RP block elseifs TOKEN_ELSE block %prec TOKEN_ELSEIF'
+'elseifs : elseifs elseif'
+'elseifs : elseif'
+'elseif : TOKEN_ELSEIF TOKEN_LP exp TOKEN_RP block'
+'for : TOKEN_FOR TOKEN_LP TOKEN_ID TOKEN_IN exp TOKEN_TO exp TOKEN_STEPS exp TOKEN_RP block'
+'while : TOKEN_WHILE TOKEN_LP exp TOKEN_RP block'
+'return : TOKEN_RETURN exp TOKEN_SEMICOLON'
+'break : TOKEN_BREAK TOKEN_SEMICOLON'
+'continue : TOKEN_CONTINUE TOKEN_SEMICOLON'
+'exp : TOKEN_INTEGER'
+'exp : TOKEN_REAL'
+'exp : TOKEN_TRUE'
+'exp : TOKEN_FALSE'
+'exp : TOKEN_STRING'
+'exp : lvalue'
+'exp : binary_operation %prec BIOP'
+'exp : logical_operation'
+'exp : comparison_operation %prec COMOP'
+'exp : bitwise_operation %prec BITOP'
+'exp : unary_operation'
+'exp : TOKEN_LP exp TOKEN_RP'
+'exp : function_call'
+'binary_operation : exp TOKEN_ADDITION exp '
+'binary_operation : exp TOKEN_SUBTRACTION exp'
+'binary_operation : exp TOKEN_MULTIPLICATION exp'
+'binary_operation : exp TOKEN_DIVISION exp'
+'binary_operation : exp TOKEN_MODULO exp'
+'binary_operation : exp TOKEN_POWER exp'
+'binary_operation : exp TOKEN_SHIFT_LEFT exp'
+'binary_operation : exp TOKEN_SHIFT_RIGHT exp'
+'logical_operation : exp TOKEN_AND exp'
+'logical_operation : exp TOKEN_OR exp'
+'comparison_operation : exp TOKEN_LT exp'
+'comparison_operation : exp TOKEN_LE exp'
+'comparison_operation : exp TOKEN_GT exp'
+'comparison_operation : exp TOKEN_GE exp'
+'comparison_operation : exp TOKEN_EQ exp'
+'comparison_operation : exp TOKEN_NE exp'
+'bitwise_operation : exp TOKEN_BITWISE_AND exp'
+'bitwise_operation : exp TOKEN_BITWISE_OR exp'
+'unary_operation : TOKEN_SUBTRACTION exp %prec UMINUS'
+'unary_operation : TOKEN_NOT exp'
+'unary_operation : TOKEN_BITWISE_NOT exp'
+'function_call : TOKEN_ID function_call_body'
+'function_call : TOKEN_ID TOKEN_DOT TOKEN_ID function_call_body'
+'function_call_body : TOKEN_LP actual_arguments TOKEN_RP'
+'actual_arguments : actual_arguments_list'
+'actual_arguments : '
+'actual_arguments_list : actual_arguments_list TOKEN_COMMA exp'
+'actual_arguments_list : exp'
     precedence = (
         ('nonassoc', 'LVALI'),
         ('nonassoc', 'LVAL'),

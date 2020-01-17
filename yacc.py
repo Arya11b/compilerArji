@@ -6,7 +6,9 @@ import ply.yacc as yacc
 from register import Register, Label
 
 
-
+TRUE_LABEL = "TRUE_LABEL"
+FALSE_LABEL = "FALSE_LABEL"
+NEXT_LABEL = "NEXT_LABEL"
 
 # Get the token map from the lexer.  This is required.
 class Yacc:
@@ -101,10 +103,6 @@ class Yacc:
         'return_type : TOKEN_STRING_TYPE'
         print('return_type : TOKEN_STRING_TYPE')
 
-    # def p_return_type_id(self, p):
-    #     'return_type : TOKEN_ID'
-    #     print('return_type : TOKEN_ID')
-
     def p_var_list_comma(self, p):
         'var_list : var_list TOKEN_COMMA var_list_item'
         p[0] = NoneTerminal(p)
@@ -122,13 +120,11 @@ class Yacc:
         'item1 : TOKEN_ID TOKEN_ASSIGNMENT exp'
         p[0] = NoneTerminal(p)
         p[0].label = p[1]
-        p[0].value = str(p[3].value)
+        p[0].value = p[3].value
         p[0].type = p[3].type
 
         p[0].code = p[0].label + ' := ' + p[0].value + ';'
-        print('==== code ====')
-        print(p[0].code)
-        print('==============')
+        self.codes.append(p[0].code)
         self.symbol_table.append([p[0].label, p[0].value])
 
         print('item1 -> TOKEN_ID TOKEN_ASSIGNMENT exp')
@@ -139,6 +135,8 @@ class Yacc:
 
     def p_var_list_item_id(self, p):
         'var_list_item : TOKEN_ID'
+        p[0] = NoneTerminal(p)
+        p[0].label = p[1]
         print('var_list_item -> TOKEN_ID')
 
     # def p_var_list_item_assignment(self, p):
@@ -375,14 +373,24 @@ class Yacc:
         'exp : TOKEN_TRUE'
         p[0] = NoneTerminal(p)
         p[0].type = 'bool'
-        p[0].value = 'True'
+        next_quad = len(self.codes)
+        p[0].true_list = [next_quad]
+        p[0].m = next_quad + 1
+        code = "L" + str(next_quad) + ": " + "goto _" + ";"
+        self.codes.append(code)
+        p[0].value = 'true'
         print('exp : TOKEN_TRUE')
 
     def p_exp_false(self, p):
         'exp : TOKEN_FALSE'
         p[0] = NoneTerminal(p)
         p[0].type = 'bool'
-        p[0].value = 'False'
+        next_quad = len(self.codes)
+        p[0].true_list = [next_quad]
+        p[0].m = next_quad + 1
+        code = "L" + str(next_quad) + ": " + "goto _" + ";"
+        self.codes.append(code)
+        p[0].value = 'false'
         print('exp : TOKEN_FALSE')
 
     def p_exp_string(self, p):
@@ -404,7 +412,9 @@ class Yacc:
 
     def p_exp_logical_op(self, p):
         'exp : logical_operation'
-        p[0] = p[1]
+        p[0] = NoneTerminal(p)
+        p[0].code = p[1].code
+        p[0].place = p[1].get_value()
         print('exp : logical_operation')
 
     def p_exp_comparison_op(self, p):
@@ -424,6 +434,7 @@ class Yacc:
 
     def p_exp_lp_exp_rp(self, p):
         'exp : TOKEN_LP exp TOKEN_RP'
+        p[0] = p[2]
         print('exp : TOKEN_LP exp TOKEN_RP')
 
     def p_exp_func_call(self, p):
@@ -432,45 +443,59 @@ class Yacc:
 
     def p_binary_operation_add(self, p):
         'binary_operation : exp TOKEN_ADDITION exp '
-        binary_operation_code_4op(p, self.codes)
+        four_operation_code(p, self.codes)
         print('binary_operation : exp TOKEN_ADDITION exp ')
 
     def p_binary_operation_sub(self, p):
         'binary_operation : exp TOKEN_SUBTRACTION exp'
-        binary_operation_code_4op(p, self.codes)
+        four_operation_code(p, self.codes)
         print('binary_operation : exp TOKEN_SUBTRACTION exp')
 
     def p_binary_operation_mult(self, p): #handled
         'binary_operation : exp TOKEN_MULTIPLICATION exp'
-        binary_operation_code_4op(p, self.codes)
+        four_operation_code(p, self.codes)
         print('binary_operation : exp TOKEN_MULTIPLICATION exp')
 
     def p_binary_operation_div(self, p):
         'binary_operation : exp TOKEN_DIVISION exp'
-        binary_operation_code_4op(p, self.codes)
+        four_operation_code(p, self.codes)
         print('binary_operation : exp TOKEN_DIVISION exp')
 
     def p_binary_operation_modulu(self, p):
         'binary_operation : exp TOKEN_MODULO exp'
-        binary_operation_code_4op(p, self.codes)
+        four_operation_code(p, self.codes)
         print('binary_operation : exp TOKEN_MODULO exp')
 
     def p_binary_operation_pow(self, p):
         'binary_operation : exp TOKEN_POWER exp'
-        binary_operation_code_4op(p, self.codes)
+        four_operation_code(p, self.codes)
         print('binary_operation : exp TOKEN_POWER exp')
 
     def p_binary_operation_shleft(self, p):
         'binary_operation : exp TOKEN_SHIFT_LEFT exp'
+        four_operation_code(p, self.codes)
         print('binary_operation : exp TOKEN_SHIFT_LEFT exp')
 
     def p_binary_operation_shright(self, p):
         'binary_operation : exp TOKEN_SHIFT_RIGHT exp'
+        four_operation_code(p, self.codes)
         print('binary_operation : exp TOKEN_SHIFT_RIGHT exp')
 
     def p_logical_operation_and(self, p):
         'logical_operation : exp TOKEN_AND exp'
+        p[0] = NoneTerminal(p)
+        m = p[1].m
+        self.backpatch(p[1].true_list, m)
+        p[0].false_list = p[1].false_list + p[3].false_list
+        p[0].true_list = p[3].true_list
+
+        p[0].code = self.codes
+        # true_label = Label()
+        # self.back_patch_true(p[1], true_label)
+        # p[0].code = p[1].code + true_label + ": // logical calculation (AND)\n" + p[3].code
+        # print(p[0].code)
         print('logical_operation : exp TOKEN_AND exp')
+
 
     def p_logical_operation_or(self, p):
         'logical_operation : exp TOKEN_OR exp'
@@ -502,25 +527,29 @@ class Yacc:
 
     def p_bitwise_operation_bit_and(self, p):
         'bitwise_operation : exp TOKEN_BITWISE_AND exp'
+        four_operation_code(p, self.codes)
         print('bitwise_operation : exp TOKEN_BITWISE_AND exp')
 
+    #ok
     def p_bitwise_operation_bit_or(self, p):
         'bitwise_operation : exp TOKEN_BITWISE_OR exp'
+        four_operation_code(p, self.codes)
         print('bitwise_operation : exp TOKEN_BITWISE_OR exp')
 
+    #ok
     def p_unary_operation_mirror(self, p):
         'unary_operation : TOKEN_SUBTRACTION exp %prec UMINUS'
-        binary_operation_code_3op(p,self.codes)
+        three_operation_code(p, self.codes)
         print('unary_operation : TOKEN_SUBTRACTION exp %prec UMINUS')
     #ok
     def p_unary_operation_not(self, p):
         'unary_operation : TOKEN_NOT exp'
-        binary_operation_code_3op(p,self.codes)
+        three_operation_code(p, self.codes)
         print('unary_operation : TOKEN_NOT exp')
     #ok
     def p_unary_operation_bit_not(self, p):
         'unary_operation : TOKEN_BITWISE_NOT exp'
-        binary_operation_code_3op(p,self.codes)
+        three_operation_code(p, self.codes)
         print('unary_operation : TOKEN_BITWISE_NOT exp')
 
     def p_function_call_func2(self, p):
@@ -596,6 +625,26 @@ class Yacc:
         ('left', 'UMINUS'),
         ('left', 'TOKEN_RP', 'TOKEN_LP')
     )
+
+    def back_patch_true(self,exp, true_label):
+        exp.code = exp.code.replace(TRUE_LABEL, true_label.label)
+
+    def back_patch_false(self,exp, false_label):
+        exp.code = exp.code.replace(FALSE_LABEL, false_label.label)
+
+    def backpatch(self, in_list, m):
+        print("backpatch")
+        print(in_list)
+        print(m)
+        for index in in_list:
+            print("in for")
+            print(index)
+            print(m)
+            code = self.codes[index]
+            print(code)
+            new_code = code.replace("_", str(m))
+            print(code)
+            self.codes[index] = new_code
 
 #
 # y = Yacc()

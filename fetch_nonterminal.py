@@ -3,14 +3,15 @@ class NoneTerminal:
     def __init__(self, rule):
         self.rule = rule
         self.place = ""
-        self.true = ""
-        self.false = ""
+        self.true_list = []
+        self.false_list = []
         self.begin = ""
         self.type = ""
         self.exp = ""
         self.label = ""
         self.value = ""
         self.code = ''''''
+        self.m = []
         self.quad = []
         self.parameters = []
         self.number = ""
