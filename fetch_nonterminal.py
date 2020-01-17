@@ -15,8 +15,9 @@ class NoneTerminal:
         self.quad = []
         self.parameters = []
         self.number = ""
+        self.vars = []
 
     def get_value(self):
-        if self.place == "EMPTY":
+        if self.place == "":
             return str(self.value)
         return str(self.place)

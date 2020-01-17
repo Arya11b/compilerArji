@@ -3,19 +3,6 @@ from yacc import Yacc
 # from parser_test import Parser as Yacc
 import tabulate
 phase_2_test_data = '''
-//reference "Number.shl"
-class Program{
-
-	static void maine(){
-	bool a = true;
-	bool b = false;
-	bool c = a && b;
-    }
-
-}
- '''
-empty_data = ''
-test = '''
 reference "Number.shl"
 
 class Program{
@@ -36,12 +23,26 @@ class Program{
     }
   }
   
+    static void abc(){
+        int _num4;
+    }
+  
   static int add(int a, int b){
     return a + b;
   }
 }
+ '''
+empty_data = ''
+test = '''
+class Program{
+  static void maine(){
+        int a = 3;
+        int b = 4 * a;
+        int var = a/ (-b + 32 << 2);
+    }
+}
 '''
-data = phase_2_test_data
+data = test
 l = Lexer()
 lexer = l.build()
 lexer.input(data)

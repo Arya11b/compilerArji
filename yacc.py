@@ -19,6 +19,7 @@ class Yacc:
     tokens = l.tokens
     def p_program(self, p):
         'program : macros classes'
+        p[0] = NoneTerminal(p)
         print('program : macros classes')
 
     def p_macros(self, p):
@@ -97,6 +98,8 @@ class Yacc:
 
     def p_return_type_bool(self, p):
         'return_type : TOKEN_BOOL_TYPE'
+        p[0] = NoneTerminal(p)
+        p[0].type = 'bool'
         print('return_type : TOKEN_BOOL_TYPE')
 
     def p_return_type_string(self, p):
@@ -119,12 +122,16 @@ class Yacc:
     def p_item1(self, p): #handled
         'item1 : TOKEN_ID TOKEN_ASSIGNMENT exp'
         p[0] = NoneTerminal(p)
-        p[0].label = p[1]
-        p[0].value = p[3].value
-        p[0].type = p[3].type
-
-        p[0].code = p[0].label + ' := ' + p[0].value + ';'
+        # p[0].label = p[1]
+        # p[0].value = p[3].value
+        # p[0].place = p[3].place
+        # p[0].type = p[3].type
+        p[0].code = p[1] + " = " + p[3].get_value()
+        p[0].vars = [p[1]]
+        # p[0].code = p[3].label + ' = ' + p[0].get_value() + ';'
         self.codes.append(p[0].code)
+        print('p0 code')
+        print(p[0].code)
         self.symbol_table.append([p[0].label, p[0].value])
 
         print('item1 -> TOKEN_ID TOKEN_ASSIGNMENT exp')
@@ -373,24 +380,26 @@ class Yacc:
         'exp : TOKEN_TRUE'
         p[0] = NoneTerminal(p)
         p[0].type = 'bool'
-        next_quad = len(self.codes)
-        p[0].true_list = [next_quad]
-        p[0].m = next_quad + 1
-        code = "L" + str(next_quad) + ": " + "goto _" + ";"
-        self.codes.append(code)
-        p[0].value = 'true'
+        # just for working
+        #
+        # next_quad = len(self.codes)
+        # p[0].true_list = [next_quad]
+        # p[0].m = next_quad + 1
+        # code = "L" + str(next_quad) + ": " + "goto _" + ";"
+        # self.codes.append(code)
+        p[0].value = p[1]
         print('exp : TOKEN_TRUE')
 
     def p_exp_false(self, p):
         'exp : TOKEN_FALSE'
         p[0] = NoneTerminal(p)
         p[0].type = 'bool'
-        next_quad = len(self.codes)
-        p[0].true_list = [next_quad]
-        p[0].m = next_quad + 1
-        code = "L" + str(next_quad) + ": " + "goto _" + ";"
-        self.codes.append(code)
-        p[0].value = 'false'
+        # next_quad = len(self.codes)
+        # p[0].true_list = [next_quad]
+        # p[0].m = next_quad + 1
+        # code = "L" + str(next_quad) + ": " + "goto _" + ";"
+        # self.codes.append(code)
+        p[0].value = p[1]
         print('exp : TOKEN_FALSE')
 
     def p_exp_string(self, p):
@@ -484,16 +493,17 @@ class Yacc:
     def p_logical_operation_and(self, p):
         'logical_operation : exp TOKEN_AND exp'
         p[0] = NoneTerminal(p)
-        m = p[1].m
-        self.backpatch(p[1].true_list, m)
-        p[0].false_list = p[1].false_list + p[3].false_list
-        p[0].true_list = p[3].true_list
+        true_label = Label()
+        print(p[1].code)
+        print('=====+')
+        self.back_patch_true(p[1],true_label)
+        p[0].code = p[1].code + true_label.label + ": // logical calculation (AND)\n " + p[3].code
 
-        p[0].code = self.codes
-        # true_label = Label()
-        # self.back_patch_true(p[1], true_label)
-        # p[0].code = p[1].code + true_label + ": // logical calculation (AND)\n" + p[3].code
-        # print(p[0].code)
+        # m = p[1].m
+        # self.backpatch(p[1].true_list, m)
+        # p[0].false_list = p[1].false_list + p[3].false_list
+        # p[0].true_list = p[3].true_list
+
         print('logical_operation : exp TOKEN_AND exp')
 
 
@@ -627,7 +637,11 @@ class Yacc:
     )
 
     def back_patch_true(self,exp, true_label):
+        print('yeee')
+        print(exp.code)
         exp.code = exp.code.replace(TRUE_LABEL, true_label.label)
+        print('yeee')
+        print(exp.code)
 
     def back_patch_false(self,exp, false_label):
         exp.code = exp.code.replace(FALSE_LABEL, false_label.label)
